@@ -28,7 +28,7 @@ pavlok.login(async (result: any, code: any) => {
       const day = date.getDay();
       const hour = date.getHours();
       const minute = date.getMinutes();
-      if(hour < 22 && hour > 7 && day != 0) {
+      if(hour < 22 && hour > 6 && day != 0) {
         console.log(`Sending notification after ${delay_seconds} seconds...`);
         await new Promise((resolve) => setTimeout(resolve, delay_seconds * 1000));
         pavlok.vibrate();
