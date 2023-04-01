@@ -24,13 +24,18 @@ pavlok.login(async (result: any, code: any) => {
     console.log("Logged successfully to Pavlok with code " + code);
     while (true) {
       const delay_seconds = poisson(45*60);
-      console.log(`Sending notification after ${delay_seconds} seconds...`);
-      await new Promise((resolve) => setTimeout(resolve, delay_seconds * 1000));
       const date = new Date();
+      const day = date.getDay();
       const hour = date.getHours();
       const minute = date.getMinutes();
-      pavlok.vibrate();
-      execSync(`roam-api create '#tagtime ${hour}:${minute}' #untagged`);
+      if(hour < 22 && hour > 7 && day != 0) {
+        console.log(`Sending notification after ${delay_seconds} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay_seconds * 1000));
+        pavlok.vibrate();
+        execSync(`roam-api create '#tagtime ${hour}:${minute}' #untagged`);
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+      }
     }
   } else {
     throw new Error("Failed to login to Pavlok.");
