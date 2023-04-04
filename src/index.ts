@@ -23,16 +23,19 @@ pavlok.login(async (result: any, code: any) => {
   if (result) {
     console.log("Logged successfully to Pavlok with code " + code);
     while (true) {
-      const delay_seconds = poisson(45*60);
+      const delay_minutes = poisson(45);
+      const delay_milliseconds = delay_minutes * 60 * 1000;
+      console.log("Waiting...");
+      await new Promise((resolve) => setTimeout(resolve, delay_milliseconds));
       const date = new Date();
       const day = date.getDay();
       const hour = date.getHours();
-      const minute = date.getMinutes();
-      if(hour < 22 && hour > 6 && day != 0) {
-        console.log(`Sending notification after ${delay_seconds} seconds...`);
-        await new Promise((resolve) => setTimeout(resolve, delay_seconds * 1000));
+      if (hour < 22 && hour > 6 && day != 0) {
+        const hour = `0${date.getHours()}`.slice(-2);
+        const minute = `0${date.getMinutes()}`.slice(-2);
         pavlok.vibrate();
-        execSync(`roam-api create '#tagtime ${hour}:${minute}' #untagged`);
+        execSync(`roam-api create '{{[[TODO]]}} #tagtime ${hour}:${minute}'`);
+        console.log(`Sent notification after ${delay_minutes} minutes...`);
       } else {
         await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
       }
