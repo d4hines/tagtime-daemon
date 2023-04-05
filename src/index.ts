@@ -30,14 +30,16 @@ pavlok.login(async (result: any, code: any) => {
       const date = new Date();
       const day = date.getDay();
       const hour = date.getHours();
+      const hour_text = `0${date.getHours()}`.slice(-2);
+      const minute_text = `0${date.getMinutes()}`.slice(-2);  
+      const time = `${hour_text}:${minute_text}`;
       if (hour < 22 && hour > 6 && day != 0) {
-        const hour = `0${date.getHours()}`.slice(-2);
-        const minute = `0${date.getMinutes()}`.slice(-2);
         pavlok.vibrate();
-        execSync(`roam-api create '{{[[TODO]]}} #tagtime ${hour}:${minute}'`);
+        execSync(`roam-api create '{{[[TODO]]}} #tagtime ${time}'`);
         console.log(`Sent notification after ${delay_minutes} minutes...`);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+        execSync(`roam-api create '#tagtime ${time} #untracked'`);
+        console.log(`Logged untracked time after ${delay_minutes} minutes...`);
       }
     }
   } else {
